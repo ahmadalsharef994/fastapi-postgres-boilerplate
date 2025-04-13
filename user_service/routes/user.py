@@ -1,18 +1,13 @@
 # --- user_service/routes/user.py ---
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy import Column, Integer, String, create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
-import os
-from ..db import get_db
-from ..models import User
+
 from fastapi import APIRouter, HTTPException, Depends, Header
 from sqlalchemy.orm import Session
 from ..db import get_db
 from ..models.User import User
 from ..auth.jwt_handler import create_access_token, decode_token
 
+router = APIRouter(prefix="/user", tags=["User"])
 
-router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post("/")
 def create_user(email: str, password: str, role: str, db: Session = Depends(get_db)):
@@ -24,13 +19,13 @@ def create_user(email: str, password: str, role: str, db: Session = Depends(get_
     db.refresh(user)
     return user
 
+
 @router.get("/{user_id}")
 def get_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
 
 
 @router.post("/register")
@@ -43,6 +38,7 @@ def register(email: str, password: str, role: str, db: Session = Depends(get_db)
     db.refresh(user)
     return {"message": "User created successfully", "user_id": user.id}
 
+
 @router.post("/login")
 def login(email: str, password: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
@@ -51,7 +47,7 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
     token = create_access_token({"sub": user.email, "role": user.role, "user_id": user.id})
     return {"access_token": token, "token_type": "bearer"}
 
-# RBAC helper
+
 def require_role(required_role: str):
     def checker(Authorization: str = Header(...)):
         token = Authorization.split(" ")[1] if " " in Authorization else Authorization
@@ -61,6 +57,6 @@ def require_role(required_role: str):
         return decoded
     return checker
 
+
 @router.get("/me")
 def get_profile(user=Depends(require_role("candidate"))):
-    return {"email": user["sub"], "role": user["role"], "user_id": user["user_id"]}
