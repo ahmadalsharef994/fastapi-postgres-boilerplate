@@ -1,0 +1,50 @@
+# --- docker-compose.yml ---
+version: "3.9"
+services:
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smarthub
+    ports:
+      - "5432:5432"
+
+  api_gateway:
+    build: ./api_gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - JWT_SECRET=dev-secret
+    depends_on:
+      - user_service
+
+  user_service:
+    build: ./user_service
+    ports:
+      - "8001:8001"
+    environment:
+      - JWT_SECRET=dev-secret
+
+  job_service:
+    build: ./job_service
+    ports:
+      - "8002:8002"
+    environment:
+      - JWT_SECRET=dev-secret
+
+  ai_service:
+    build: ./ai_service
+    ports:
+      - "8003:8003"
+    environment:
+      - JWT_SECRET=dev-secret
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./scripts/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml

@@ -1,0 +1,10 @@
+# --- requirements.txt (shared) ---
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+httpx
+prometheus-fastapi-instrumentator
