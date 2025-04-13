@@ -1,7 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from job_service.db import get_db
-from job_service.models.job import Job
+from ..db import get_db
+# import from 1 level up?
+
+
+
+from ..models.job import Job
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 
