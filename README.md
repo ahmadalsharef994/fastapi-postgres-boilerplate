@@ -1,4 +1,4 @@
-# 🚀 SmartHub FastAPI + PostgreSQL Boilerplate
+# 🚀 FastAPI + PostgreSQL Boilerplate
 
 This is a production-ready FastAPI + PostgreSQL boilerplate with:
 
